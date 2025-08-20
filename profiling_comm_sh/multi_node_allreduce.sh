@@ -15,7 +15,7 @@ TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 
 # Test parameters
 MIN_SIZE="2K"
-MAX_SIZE="8G"
+MAX_SIZE="4G"
 STEP_FACTOR="2"
 ITERATIONS="20"
 WARMUP_ITERS="5"
@@ -113,8 +113,13 @@ usage() {
     echo "Usage: $0 [OPTIONS]"
     echo ""
     echo "Options:"
+    echo "  --2x1gpu        Run 2x1GPU test (2 total GPUs)"
     echo "  --2x2gpu        Run 2x2GPU test (4 total GPUs)"
+    echo "  --2x3gpu        Run 2x3GPU test (6 total GPUs)"
     echo "  --2x4gpu        Run 2x4GPU test (8 total GPUs)"
+    echo "  --2x5gpu        Run 2x5GPU test (10 total GPUs)"
+    echo "  --2x6gpu        Run 2x6GPU test (12 total GPUs)"
+    echo "  --2x7gpu        Run 2x7GPU test (14 total GPUs)"
     echo "  --2x8gpu        Run 2x8GPU test (16 total GPUs)"
     echo "  --all           Run all configurations (default)"
     echo "  --help          Show this help message"
@@ -141,12 +146,32 @@ TEST_MODE="all"
 
 while [[ $# -gt 0 ]]; do
     case $1 in
+        --2x1gpu)
+            TEST_MODE="2x1gpu"
+            shift
+            ;;
         --2x2gpu)
             TEST_MODE="2x2gpu"
             shift
             ;;
+        --2x3gpu)
+            TEST_MODE="2x3gpu"
+            shift
+            ;;
         --2x4gpu)
             TEST_MODE="2x4gpu"
+            shift
+            ;;
+        --2x5gpu)
+            TEST_MODE="2x5gpu"
+            shift
+            ;;
+        --2x6gpu)
+            TEST_MODE="2x6gpu"
+            shift
+            ;;
+        --2x7gpu)
+            TEST_MODE="2x7gpu"
             shift
             ;;
         --2x8gpu)
@@ -192,20 +217,50 @@ nvidia-smi > /dev/null 2>&1 || {
 
 # Run tests based on mode
 case $TEST_MODE in
+    "2x1gpu")
+        run_multi_node_allreduce_test 1
+        ;;
     "2x2gpu")
         run_multi_node_allreduce_test 2
         ;;
+    "2x3gpu")
+        run_multi_node_allreduce_test 3
+        ;;
     "2x4gpu")
         run_multi_node_allreduce_test 4
+        ;;
+    "2x5gpu")
+        run_multi_node_allreduce_test 5
+        ;;
+    "2x6gpu")
+        run_multi_node_allreduce_test 6
+        ;;
+    "2x7gpu")
+        run_multi_node_allreduce_test 7
         ;;
     "2x8gpu")
         run_multi_node_allreduce_test 8
         ;;
     "all")
+        run_multi_node_allreduce_test 1
+        echo "Waiting 10 seconds before next test..."
+        sleep 10
         run_multi_node_allreduce_test 2
         echo "Waiting 10 seconds before next test..."
         sleep 10
+        run_multi_node_allreduce_test 3
+        echo "Waiting 10 seconds before next test..."
+        sleep 10
         run_multi_node_allreduce_test 4
+        echo "Waiting 10 seconds before next test..."
+        sleep 10
+        run_multi_node_allreduce_test 5
+        echo "Waiting 10 seconds before next test..."
+        sleep 10
+        run_multi_node_allreduce_test 6
+        echo "Waiting 10 seconds before next test..."
+        sleep 10
+        run_multi_node_allreduce_test 7
         echo "Waiting 10 seconds before next test..."
         sleep 10
         run_multi_node_allreduce_test 8
