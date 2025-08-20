@@ -36,7 +36,9 @@ class NCCLSendRecvTester:
         self.rank = rank
         self.world_size = world_size
         self.args = args
-        self.device = torch.device(f'cuda:{rank}')
+        # Use local rank for device assignment in multi-node setup
+        local_rank = int(os.environ.get('LOCAL_RANK', rank % torch.cuda.device_count()))
+        self.device = torch.device(f'cuda:{local_rank}')
         
         # Initialize logging
         self.log_file = None
@@ -313,7 +315,9 @@ class NCCLAllReduceTester:
         self.rank = rank
         self.world_size = world_size
         self.args = args
-        self.device = torch.device(f'cuda:{rank}')
+        # Use local rank for device assignment in multi-node setup
+        local_rank = int(os.environ.get('LOCAL_RANK', rank % torch.cuda.device_count()))
+        self.device = torch.device(f'cuda:{local_rank}')
 
         # Initialize logging
         self.log_file = None
@@ -545,8 +549,10 @@ def main():
                 print(f"Error: AllReduce test requires at least 2 processes, got {world_size}")
             sys.exit(1)
 
-    # Set CUDA device
-    torch.cuda.set_device(rank)
+    # Set CUDA device using local rank
+    # In multi-node setup, we need to use local rank (rank within node) not global rank
+    local_rank = int(os.environ.get('LOCAL_RANK', rank % torch.cuda.device_count()))
+    torch.cuda.set_device(local_rank)
 
     try:
         # Create tester based on operation and run tests
