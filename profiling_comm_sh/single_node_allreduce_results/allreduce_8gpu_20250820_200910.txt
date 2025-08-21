@@ -1,0 +1,6 @@
+[2025-08-20 20:09:54] Rank 0: Starting PyTorch NCCL AllReduce performance tests...
+[2025-08-20 20:09:54] Rank 0: World size: 8
+[2025-08-20 20:09:54] Rank 0: Test mode: single_node
+[2025-08-20 20:09:54] Rank 0: Testing 23 sizes from 2K to 8G
+[2025-08-20 20:10:04] Rank 0: #
+[2025-08-20 20:10:04] Rank 0: # AllReduce test completed successfully
